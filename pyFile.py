@@ -59,7 +59,6 @@ class ARModel:
             with open('ARStats.csv', 'r') as f:
                 lastLine = f.readlines()[-1].split(",")[0]
                 imNumber = int(lastLine) + 1 
-                print(imNumber)
                 self.meta["imgNumber"] = imNumber
 
     def loadImages(self, path=r'C:\Users\cvpr\Documents\Bishal\Allergic Rhinitis\Dataset\rotate', plotType="all", 
@@ -70,7 +69,7 @@ class ARModel:
         labels = []
         #  Configure the Image Location            
         # 이미지 위치 구성하기
-        self.imagePaths = list(paths.list_images(path))
+        self.imagePaths =  list(paths.list_images(path))
         # Plot type is used only in title of plot image
         # Adding to metadata
         self.meta["dataInfo"] = plotType
@@ -458,11 +457,12 @@ class ARModel:
             votedY = np.array(votedY)
             return votedY
 
-    def evalModel(self, predIdxs, testY):
+    def evalModel(self, predIdxs, testY, cReport=True):
         print("[INFO]: Model Evaluation")
         
         print("Classification Report")
-        print(classification_report(testY.argmax(axis=1), predIdxs, target_names=self.lb.classes_))
+        if cReport:
+            print(classification_report(testY.argmax(axis=1), predIdxs, target_names=self.lb.classes_))
 
         # Compute Confusion Matrix and derrive raw, accuracy, sensitivity, specificity from it
         # 혼란 매트릭스
@@ -489,6 +489,15 @@ class ARModel:
         print("specificity: {:.4f}".format(specificity))
         # Adding to metadata
         self.meta["accuracy"] = int(acc*100)
+
+    def eval2(self, y, y_hat):
+        count = 0
+        for i in range(len(y)):
+            if y[i]==y_hat[i]:
+                count += 1
+        acc = int((count / len(y) )* 100)
+        self.meta["accuracy"] = acc
+
 
     def generatePlot(self, H, iterInfo=1, arstats=False):
         # plot the training loss and accuracy
