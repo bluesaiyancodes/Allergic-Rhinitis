@@ -107,7 +107,7 @@ Contributions are what make the open source community such an amazing place to b
 
 ## License
 
-Distributed under the MIT License. See [LICENSE](https://github.com/bluesaiyancodes/Allergic-Rhinitis/blob/main/LICENSE.md) for more information.
+Distributed under the MIT License. See [LICENSE](https://github.com/bluesaiyancodes/Allergic-Rhinitis/blob/master/LICENSE.md) for more information.
 
 ## Authors
 
