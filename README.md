@@ -12,11 +12,11 @@
   </p>
 </p>
 
-<p align="center">
+<div align="center">
 
 ![Downloads](https://img.shields.io/github/downloads/bluesaiyancodes/Allergic-Rhinitis/total) ![Contributors](https://img.shields.io/github/contributors/bluesaiyancodes/Allergic-Rhinitis?color=dark-green) ![Issues](https://img.shields.io/github/issues/bluesaiyancodes/Allergic-Rhinitis) ![License](https://img.shields.io/github/license/bluesaiyancodes/Allergic-Rhinitis) ![TensorFlow](https://img.shields.io/badge/TensorFlow-FF6F00?style=flat&logo=tensorflow&logoColor=white)
 
-</p>
+</div>
 
 ## Table Of Contents
 
