@@ -12,7 +12,7 @@ lossSel = ["bce", "focal"]
 lossOnly = ["focal"]
 
 # normal or crossvalidation
-exeState = "oneVall"
+exeState = "LOO"
 
 def fix_gpu():
     config = ConfigProto()
@@ -77,22 +77,35 @@ if exeState == "crossvalidation":
                     dataType = "CV-R", arstats=True)
 
 
-if exeState == "oneVall":
+if exeState == "LOO":
     model = ARModel()
 
     (data, labels) = model.loadImages(r'/home/bishal/Research/Allergic-Rhinitis/Dataset/all/rotate', 
         plotType="R", classification="multiclass", colorMode="RGB", cleanImageF=True, resize=True,
         correctColor=False, contours=False, crop=True ,printImgDemo=False)
+
     (data, labels) = model.prepareData(data, labels, weightedLossCalc=True)
+
     trainAug = model.setDataAugmentation(normalizeData=False, rotate=2, zoom=0.15, wShift=0.2, hShift=0.2, 
                                 shear=0.15, hFlip=True, vFlip=False, generateImages=False)
 
     for currentModel in modelSel:
         for loss in lossOnly:
+
+            currBModel = model.setBaseModel(currentModel)
+            # Set Head Model Activation: (relu, leakyrelu, siren)
+            currHModel = model.setHeadModel(currBModel, dropoutRate=0.5, activation="siren")
+            finalModel = model.initModel(currBModel, currHModel, baseTrainable=False)
+            model.setHyperParameters(learningRate = 1e-3, epochs = 200, batchSize = 8)
+            finalModel = model.compileModel(finalModel, loss=loss)
+
+
             # for one V all
             y_hat = []
             y = []
             for i in range(len(data)):
+
+                print("#### Iter - %s ####"%str(i+1))
                 trainX = np.delete(data, [i], axis=0)
                 trainY = np.delete(labels, [i], axis=0)
                 testY = np.expand_dims(data[i], 0)
@@ -100,25 +113,22 @@ if exeState == "oneVall":
                 y.append(labels[i])
 
                 print("Sizes : ", trainX.shape, "--", trainY.shape)
+                print("Sizes : ", testX.shape, "--", testY.shape)
                 
-                currBModel = model.setBaseModel(currentModel)
-                # Set Head Model Activation: (relu, leakyrelu, siren)
-                currHModel = model.setHeadModel(currBModel, dropoutRate=0.5, activation="siren")
-                finalModel = model.initModel(currBModel, currHModel, baseTrainable=False)
-                model.setHyperParameters(learningRate = 1e-3, epochs = 200, batchSize = 8)
-                finalModel = model.compileModel(finalModel, loss=loss)
                 (H, finalModel) = model.startTraining(finalModel, trainAug, trainX, trainY, 
-                                                    testX, testY, weightedLoss=True, learningDecay=False, earlyStop=True)
+                                                        testX, testY, weightedLoss=True, learningDecay=False, earlyStop=True)
                 # Start Testingboot
-                predIdxs = model.startTesting(testX, testY, finalModel, voting=0)
+                predIdxs = model.startTesting(testX, testY, finalModel, voting=30)
                 # Append to the Y hat list
-                y_hat.append(predIdxs)
+                y_hat.append(predIdxs[0])
                 
-                model.eval2(y, y_hat)
-                # Adds information to ARStats.csv File
-                model.updateCSV()
+            model.eval2(y, y_hat)
+            
 
-                # Generate Plot - (ARSTATS - generates plot in Figures/ARStats.Plots)
-                #model.generatePlot(H, iterInfo="8", arstats=True)
+            # Generate Plot - (ARSTATS - generates plot in Figures/ARStats.Plots)
+            model.generatePlot(H, iterInfo="8", arstats=True, LOO=True)
 
-                #model.getGradCams(type="test", model=finalModel, testX=testX)
+            # Adds information to ARStats.csv File
+            model.updateCSV()
+
+            #model.getGradCams(type="test", model=finalModel, testX=testX)

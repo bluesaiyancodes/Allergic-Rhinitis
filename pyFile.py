@@ -386,6 +386,7 @@ class ARModel:
                 validation_steps=len(testX) // self.BS,
                 epochs=self.EPOCHS,
                 callbacks=callback)
+        
         # Stop Timer
         stop = timeit.default_timer()
         print('Total Training Time: ', stop - start) 
@@ -396,6 +397,7 @@ class ARModel:
         self.meta["wloss"] = weightedLoss
         self.meta["epochs"] = len(H.history["loss"])
         return (H, model)
+
 
     def startTesting(self, testX, testY, model, voting=0):
         # Make predictions on the testing set
@@ -457,6 +459,7 @@ class ARModel:
             votedY = np.array(votedY)
             return votedY
 
+
     def evalModel(self, predIdxs, testY, cReport=True):
         print("[INFO]: Model Evaluation")
         
@@ -491,38 +494,72 @@ class ARModel:
         self.meta["accuracy"] = int(acc*100)
 
     def eval2(self, y, y_hat):
+        # Divide data based on class
+        y_org = []
+        for val in y:
+            if val[0]:
+                y_org.append(0)
+            elif val[1]:
+                y_org.append(1)
+            elif val[2]:
+                y_org.append(2)
+
+
         count = 0
-        for i in range(len(y)):
-            if y[i]==y_hat[i]:
+        for i in range(len(y_org)):
+            if y_org[i] == y_hat[i]:
                 count += 1
-        acc = int((count / len(y) )* 100)
+        acc = ((count / len(y_org) ) * 100)
+
         self.meta["accuracy"] = acc
 
 
-    def generatePlot(self, H, iterInfo=1, arstats=False):
+    def generatePlot(self, H, iterInfo=1, arstats=False, LOO=False):
         # plot the training loss and accuracy
         # 플롯 그래프
-        print("[INFO]: Plot Generation")
-        N = self.meta["epochs"]
-        plt.style.use("ggplot")
-        plt.figure()
-        plt.plot(np.arange(0, N), H.history["loss"], label="train_loss")
-        plt.plot(np.arange(0, N), H.history["val_loss"], label="val_loss")
-        plt.plot(np.arange(0, N), H.history["accuracy"], label="train_acc")
-        plt.plot(np.arange(0, N), H.history["val_accuracy"], label="val_acc")
-        title = "AR-"+self.meta["model"]+"-"+self.meta["dataInfo"]+"-lr_"+str(self.meta["learningRate"])+"-dropout_"+str(self.meta["dropoutRate"])+"-acc_"+str(self.meta["accuracy"])
-        #plt.title("Allergic Rhinitis-Xception-aligned-0.5d")
-        plt.title(title)
-        plt.xlabel("Epoch #")
-        plt.ylabel("Loss/Accuracy")
-        plt.legend(loc="lower left")
-        if arstats:
-            cwd = os.getcwd()
-            figName = cwd+"/Figures/ARStats.Plots/" + str(self.meta["imgNumber"]) + ".png"
-        else:
-            figName = "[iter-"+str(iterInfo)+"]plot-" + datetime.now().strftime('%H-%M-%S')
-        plt.savefig(figName)
-        self.meta["imgNumber"] += 1
+        if not LOO:
+            print("[INFO]: Plot Generation")
+            N = self.meta["epochs"]
+            plt.style.use("ggplot")
+            plt.figure()
+            plt.plot(np.arange(0, N), H.history["loss"], label="train_loss")
+            plt.plot(np.arange(0, N), H.history["val_loss"], label="val_loss")
+            plt.plot(np.arange(0, N), H.history["accuracy"], label="train_acc")
+            plt.plot(np.arange(0, N), H.history["val_accuracy"], label="val_acc")
+            title = "AR-"+self.meta["model"]+"-"+self.meta["dataInfo"]+"-lr_"+str(self.meta["learningRate"])+"-dropout_"+str(self.meta["dropoutRate"])+"-acc_"+str(self.meta["accuracy"])
+            #plt.title("Allergic Rhinitis-Xception-aligned-0.5d")
+            plt.title(title)
+            plt.xlabel("Epoch #")
+            plt.ylabel("Loss/Accuracy")
+            plt.legend(loc="lower left")
+            if arstats:
+                cwd = os.getcwd()
+                figName = cwd+"/Figures/ARStats.Plots/" + str(self.meta["imgNumber"]) + ".png"
+            else:
+                figName = "[iter-"+str(iterInfo)+"]plot-" + datetime.now().strftime('%H-%M-%S')
+            plt.savefig(figName)
+            self.meta["imgNumber"] += 1
+
+        if LOO:
+            print("[INFO]: Plot Generation")
+            N = self.meta["epochs"]
+            plt.style.use("ggplot")
+            plt.figure()
+            plt.plot(np.arange(0, N), H.history["loss"], label="train_loss")
+            plt.plot(np.arange(0, N), H.history["accuracy"], label="train_acc")
+            title = "AR-"+self.meta["model"]+"-"+self.meta["dataInfo"]+"-lr_"+str(self.meta["learningRate"])+"-dropout_"+str(self.meta["dropoutRate"])+"-acc_"+str(self.meta["accuracy"])
+            #plt.title("Allergic Rhinitis-Xception-aligned-0.5d")
+            plt.title(title)
+            plt.xlabel("Epoch #")
+            plt.ylabel("Loss/Accuracy")
+            plt.legend(loc="lower left")
+            if arstats:
+                cwd = os.getcwd()
+                figName = cwd+"/Figures/ARStats.Plots/" + str(self.meta["imgNumber"]) + ".png"
+            else:
+                figName = "[iter-"+str(iterInfo)+"]plot-" + datetime.now().strftime('%H-%M-%S')
+            plt.savefig(figName)
+            self.meta["imgNumber"] += 1
 
     def getGradCams(self, type, model, testX = None, alpha=0.4):
 
