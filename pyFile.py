@@ -61,7 +61,7 @@ class ARModel:
                 imNumber = int(lastLine) + 1 
                 self.meta["imgNumber"] = imNumber
 
-    def loadImages(self, path=r'C:\Users\cvpr\Documents\Bishal\Allergic Rhinitis\Dataset\rotate', plotType="all", 
+    def loadImages(self, path=r'C:\Users\cvpr\Documents\Bishal\Allergic Rhinitis\Dataset\rotate', plotType="all", shuffled=False,
                     classification="multiclass", colorMode = "RGB", cleanImageF=False, resize=False,
                     crop = False, correctColor=False, contours=False, printImgDemo=False):
         print("[INFO]: Trying to Read the images from ", path)
@@ -70,6 +70,7 @@ class ARModel:
         #  Configure the Image Location            
         # 이미지 위치 구성하기
         self.imagePaths =  list(paths.list_images(path))
+
         # Plot type is used only in title of plot image
         # Adding to metadata
         self.meta["dataInfo"] = plotType
@@ -81,7 +82,8 @@ class ARModel:
 
 
         # Shuffle the items in the image data paths
-        #shuffle(self.imagePaths)
+        if shuffled:
+            shuffle(self.imagePaths)
         
         
         # Formatting data and labels
@@ -338,11 +340,26 @@ class ARModel:
         self.meta["loss"] = loss 
         return model
 
-    def startTraining(self, model, trainAug, trainX, trainY, testX, testY, weightedLoss=False, learningDecay= False, earlyStop=False):                                                        
+    def startTraining(self, model, trainAug, trainX, trainY, testX, testY, weightedLoss=False, learningDecay= False, 
+                        earlyStop=False, saveModel=True, verbose=1):                                                        
         # Train the Network Model
         # 모델 교육
         print("[INFO] Model Training")
-        model_checkpoint = ModelCheckpoint('AR_MODEL.hdf5', monitor='loss',verbose=1, save_best_only=True)
+        
+        # Setting Callbacks
+        callback = []
+
+        # Verbose and Save Model ?
+        if verbose ==1 :
+            es_verbose = 1
+            if saveModel:
+                model_checkpoint = ModelCheckpoint('AR_MODEL.hdf5', monitor='loss',verbose=1, save_best_only=True)
+                callback.append(model_checkpoint)
+        else:
+            es_verbose = 0
+            if saveModel:
+                model_checkpoint = ModelCheckpoint('AR_MODEL.hdf5', monitor='loss',verbose=0, save_best_only=True)
+                callback.append(model_checkpoint)
 
         # Gradual Learning Rate reduction
         learningRateReduction = ReduceLROnPlateau(monitor='val_accuracy', 
@@ -354,10 +371,10 @@ class ARModel:
         earlyStopping = EarlyStopping(
                                     monitor='val_accuracy', 
                                     patience=95,
+                                    verbose=es_verbose,
                                     restore_best_weights=True)
 
-        # Setting Callbacks
-        callback = [model_checkpoint]
+        
         if learningDecay:
             callback.append(learningRateReduction)
         if earlyStop:
@@ -377,7 +394,8 @@ class ARModel:
                 validation_steps=len(testX) // self.BS,
                 class_weight=dict(enumerate(self.class_weights)),
                 epochs=self.EPOCHS,
-                callbacks=callback)
+                callbacks=callback, 
+                verbose=verbose)
         else:
             H = model.fit(
                 trainAug.flow(trainX, trainY, batch_size=self.BS),
@@ -385,7 +403,8 @@ class ARModel:
                 validation_data=(testX, testY),
                 validation_steps=len(testX) // self.BS,
                 epochs=self.EPOCHS,
-                callbacks=callback)
+                callbacks=callback, 
+                verbose=verbose)
         
         # Stop Timer
         stop = timeit.default_timer()
@@ -397,7 +416,6 @@ class ARModel:
         self.meta["wloss"] = weightedLoss
         self.meta["epochs"] = len(H.history["loss"])
         return (H, model)
-
 
     def startTesting(self, testX, testY, model, voting=0):
         # Make predictions on the testing set
@@ -459,7 +477,6 @@ class ARModel:
             votedY = np.array(votedY)
             return votedY
 
-
     def evalModel(self, predIdxs, testY, cReport=True):
         print("[INFO]: Model Evaluation")
         
@@ -512,7 +529,6 @@ class ARModel:
         acc = ((count / len(y_org) ) * 100)
 
         self.meta["accuracy"] = acc
-
 
     def generatePlot(self, H, iterInfo=1, arstats=False, LOO=False):
         # plot the training loss and accuracy
