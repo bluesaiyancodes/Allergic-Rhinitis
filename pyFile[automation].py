@@ -27,8 +27,8 @@ def fix_gpu():
 def AR_normal(looper=1):
     model = ARModel(new=False)
     # Data Load
-    (data, labels) = model.loadImages(r'/home/bishal/Research/Allergic-Rhinitis/Dataset/all/rotate', 
-        plotType="R", shuffled=False, classification="multiclass", colorMode="RGB", cleanImageF=True, 
+    (data, labels) = model.loadImages(r'/home/bishal/Research/Allergic-Rhinitis/Dataset/all/non_rotate', 
+        plotType="NR", shuffled=False, classification="multiclass", colorMode="RGB", cleanImageF=True, 
         resize=True, correctColor=False, contours=False, crop=True ,printImgDemo=False)
 
     # Data Preparation
@@ -51,8 +51,8 @@ def AR_normal(looper=1):
                     # Read" new shuffled data 
                     print("\n Looper Number -> ", i+1)
                     print("\nLoading Shuffled Data")
-                    (data, labels) = model.loadImages(r'/home/bishal/Research/Allergic-Rhinitis/Dataset/all/rotate', 
-                                plotType="R", shuffled=True, classification="multiclass", colorMode="RGB", cleanImageF=True, 
+                    (data, labels) = model.loadImages(r'/home/bishal/Research/Allergic-Rhinitis/Dataset/all/non_rotate', 
+                                plotType="NR", shuffled=True, classification="multiclass", colorMode="RGB", cleanImageF=True, 
                                 resize=True, correctColor=False, contours=False, crop=True ,printImgDemo=False)
                                 
 
