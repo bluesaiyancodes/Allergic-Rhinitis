@@ -111,7 +111,7 @@ Distributed under the MIT License. See [LICENSE](https://github.com/bluesaiyanco
 
 ## Authors
 
-* [**Bishal Ranjan Swain**](https://bluesaiyancodes.github.io/) - *PhD Candidate at Kumoh National Insitute of Technology* - *Project Lead*
+* [**Bishal Ranjan Swain**](https://bluesaiyancodes.github.io/) - *PhD Candidate at Kumoh National Insitute of Technology*
 
 ## Acknowledgements
 
