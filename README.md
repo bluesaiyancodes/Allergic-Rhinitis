@@ -113,8 +113,10 @@ Distributed under the MIT License. See [LICENSE](https://github.com/bluesaiyanco
 
 * [**Bishal Ranjan Swain**](https://bluesaiyancodes.github.io/) - *PhD Candidate at Kumoh National Insitute of Technology*
 
+* [Minhae Kang](http://cvpr.kumoh.ac.kr/#team) - *Graduate Student at Kumoh National Insitute of Technology*
+
+
 ## Acknowledgements
 
 * [Prof. Jaepil Ko](http://cvpr.kumoh.ac.kr/#team)
-* [Minhae Kang](http://cvpr.kumoh.ac.kr/#team)
 
