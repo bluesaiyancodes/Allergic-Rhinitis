@@ -273,3 +273,5 @@ imageid,imageType,model,loss,classType,colorMode,clean,crop,resize,colorCorrect,
 272,R,xception,focal,multiclass,RGB,True,True,True,False,False,siren,True,0.001,False,True,200,128,10,61.412892486085184,77
 273,R,xception,focal,multiclass,RGB,True,True,True,False,False,siren,True,0.001,False,True,200,184,10,87.82876669301186,77
 274,R,xception,focal,multiclass,RGB,True,True,True,False,False,siren,True,0.001,False,True,200,102,10,49.0261800729204,72
+275,R,xception,focal,multiclass,RGB,True,True,True,False,False,siren,True,0.001,False,True,200,130,30,62.95625048596412,83
+276,R,xception,focal,multiclass,RGB,True,True,True,False,False,siren,True,0.001,False,True,200,130,30,62.76618879393209,77

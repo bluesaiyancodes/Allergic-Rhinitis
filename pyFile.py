@@ -417,7 +417,7 @@ class ARModel:
         self.meta["epochs"] = len(H.history["loss"])
         return (H, model)
 
-    def startTesting(self, testX, testY, model, voting=0):
+    def startTesting(self, testX, testY, model, voting=0, votingThres=0):
         # Make predictions on the testing set
         # 테스트 세트에서 예측한다
         print("Making Predictions on the Test Set")
@@ -459,6 +459,16 @@ class ARModel:
 
                 # perform Predition on images
                 preds = model.predict(genX, batch_size=self.BS)
+                print(len(preds))
+                if votingThres:
+                    newPreds = []
+                    for i in range(len(preds)):
+                        predsSorted = sorted(preds[i])
+                        if(predsSorted[-1]-predsSorted[-2]>votingThres):
+                            newPreds.append(preds[i].tolist())
+                    preds = newPreds
+
+                print(len(preds))
                 preds = np.argmax(preds, axis=1)
                 # Votes Selection
                 for vote in preds:

@@ -41,7 +41,7 @@ def AR_normal(looper=1):
     # Data Split
     (trainX, trainY, testX, testY) = model.setPartition(data, labels, testSize=0.20)
 
-    for currentModel in modelSel:
+    for currentModel in modelOnly:
         for loss in lossOnly:
 
             for i in range(looper):
@@ -71,7 +71,7 @@ def AR_normal(looper=1):
                                                     testX, testY, weightedLoss=True, learningDecay=False, 
                                                     earlyStop=True, saveModel=False, verbose=0)
                 # Start Testingboot
-                predIdxs = model.startTesting(testX, testY, finalModel, voting=10)
+                predIdxs = model.startTesting(testX, testY, finalModel, voting=20, votingThres=0.15)
                 # Evaluate Model based on test outputs
                 model.evalModel(predIdxs, testY)
 
