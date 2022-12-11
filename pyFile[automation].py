@@ -28,8 +28,8 @@ def AR_normal(looper=1):
     model = ARModel(new=False)
     # Data Load
     (data, labels) = model.loadImages(r'/home/bishal/Research/Allergic-Rhinitis/Dataset/all/rotate', 
-        plotType="R", shuffled=False, classification="multiclass", colorMode="RGB", cleanImageF=True, 
-        resize=True, correctColor=False, contours=False, crop=True ,printImgDemo=False)
+        plotType="R", shuffled=False, classification="multiclass", colorMode="RGB", cleanImageF=False, 
+        resize=True, correctColor=False, contours=False, crop=False ,printImgDemo=False)
 
     # Data Preparation
     (data, labels) = model.prepareData(data, labels, weightedLossCalc=True)
@@ -52,8 +52,8 @@ def AR_normal(looper=1):
                     print("\n Looper Number -> ", i+1)
                     print("\nLoading Shuffled Data")
                     (data, labels) = model.loadImages(r'/home/bishal/Research/Allergic-Rhinitis/Dataset/all/rotate', 
-                                plotType="R", shuffled=True, classification="multiclass", colorMode="RGB", cleanImageF=True, 
-                                resize=True, correctColor=False, contours=False, crop=True ,printImgDemo=False)
+                                plotType="R", shuffled=True, classification="multiclass", colorMode="RGB", cleanImageF=False, 
+                                resize=True, correctColor=False, contours=False, crop=False ,printImgDemo=False)
                                 
 
                 # Set Base Model
@@ -71,7 +71,7 @@ def AR_normal(looper=1):
                                                     testX, testY, weightedLoss=True, learningDecay=False, 
                                                     earlyStop=True, saveModel=False, verbose=0)
                 # Start Testingboot
-                predIdxs = model.startTesting(testX, testY, finalModel, voting=20, votingThres=0.15)
+                predIdxs = model.startTesting(testX, testY, finalModel, voting=0, votingThres=0.10)
                 # Evaluate Model based on test outputs
                 model.evalModel(predIdxs, testY)
 
