@@ -13,8 +13,8 @@ modelAvl = ["vgg16","vgg19","inception","xception","resnet50","resnet101","dense
 modelSel = ["inception", "xception" ]
 modelOnly = ["xception"]
 losses = ["bce", "cce", "focal", "kld"]
-lossSel = ["bce", "focal"]
-lossOnly = ["focal"]
+lossSel = ["cce", "focal"]
+lossOnly = ["bce", "cce", "focal", "kld"]
 
 # normal or crossvalidation
 exeState = "none"
@@ -25,12 +25,10 @@ def fix_gpu():
     session = InteractiveSession(config=config)
 
 def AR_normal(looper=1):
-    model = ARModel(new=False)
-    # Data Load
-    (data, labels) = model.loadImages(r'/home/bishal/Research/Allergic-Rhinitis/Dataset/all/non_rotate', 
-        plotType="NR", shuffled=False, classification="multiclass", colorMode="RGB", cleanImageF=True, 
+    model = ARModel()
+    (data, labels) = model.loadImages(r'/home/bishal/Research/Allergic-Rhinitis/Dataset/all/rotate', 
+        plotType="R", shuffled=False, classification="multiclass", colorMode="RGB", cleanImageF=True, 
         resize=True, correctColor=False, contours=False, crop=True ,printImgDemo=False)
-
     # Data Preparation
     (data, labels) = model.prepareData(data, labels, weightedLossCalc=True)
 
@@ -51,8 +49,8 @@ def AR_normal(looper=1):
                     # Read" new shuffled data 
                     print("\n Looper Number -> ", i+1)
                     print("\nLoading Shuffled Data")
-                    (data, labels) = model.loadImages(r'/home/bishal/Research/Allergic-Rhinitis/Dataset/all/non_rotate', 
-                                plotType="NR", shuffled=True, classification="multiclass", colorMode="RGB", cleanImageF=True, 
+                    (data, labels) = model.loadImages(r'/home/bishal/Research/Allergic-Rhinitis/Dataset/all/rotate', 
+                                plotType="R", shuffled=True, classification="multiclass", colorMode="RGB", cleanImageF=True, 
                                 resize=True, correctColor=False, contours=False, crop=True ,printImgDemo=False)
                                 
 
